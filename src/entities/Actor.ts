@@ -2,22 +2,34 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  OneToMany,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Cast } from './Cast';
+import { Movie } from './Movie';
 
 @Entity('actors')
 export class Actor {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   name: string;
 
-  @OneToMany(() => Cast, cast => cast.actor)
-  cast: Cast[];
+  @ManyToMany(() => Movie, movie => movie.actors)
+  @JoinTable({
+    name: 'cast',
+    joinColumn: {
+      name: 'movie_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'actor_id',
+      referencedColumnName: 'id',
+    },
+  })
+  movies: Movie[];
 
   @CreateDateColumn()
   createdAt: Date;

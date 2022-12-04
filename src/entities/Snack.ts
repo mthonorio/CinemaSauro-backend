@@ -11,7 +11,7 @@ import { PurchaseSnack } from './PurchaseSnack';
 @Entity('snacks')
 export class Snack {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @OneToMany(() => PurchaseSnack, purchaseSnack => purchaseSnack.id)
   purchase_snack: PurchaseSnack[];

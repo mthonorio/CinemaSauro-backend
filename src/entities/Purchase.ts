@@ -15,7 +15,7 @@ import { PurchaseTicket } from './PurchaseTicket';
 @Entity('purchase')
 export class Purchase {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @ManyToOne(() => Client, client => client.id)
   @JoinColumn({ name: 'client_id' })
@@ -30,18 +30,18 @@ export class Purchase {
   @Column()
   id_client: number;
 
-  @Column()
+  @Column({ type: 'money' })
   value_ticket: number;
   @Column()
   value_discount_ticket: number;
-  @Column()
+  @Column({ type: 'money' })
   value_total_ticket: number;
 
-  @Column()
+  @Column({ type: 'money' })
   value_snack: number;
-  @Column()
+  @Column({ type: 'money' })
   value_total_snack: number;
-  @Column()
+  @Column({ type: 'money' })
   value_total_purchase: number;
 
   @CreateDateColumn()

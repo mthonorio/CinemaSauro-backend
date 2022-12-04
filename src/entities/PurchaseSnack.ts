@@ -13,7 +13,7 @@ import { Snack } from './Snack';
 @Entity('purchase_snack')
 export class PurchaseSnack {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @ManyToOne(() => Snack, snack => snack.id)
   @JoinColumn({ name: 'snack_id' })

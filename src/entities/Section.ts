@@ -16,7 +16,7 @@ import { TypeSection } from './TypeSection';
 @Entity('section')
 export class Section {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @ManyToOne(() => Movie, movie => movie.id)
   @JoinColumn({ name: 'movie_id' })

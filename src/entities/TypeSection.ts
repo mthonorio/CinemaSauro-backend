@@ -11,10 +11,10 @@ import { Section } from './Section';
 @Entity('type_section')
 export class TypeSection {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
-  // @OneToMany(() => Section, section => section.room)
-  // sections: Section[];
+  @OneToMany(() => Section, section => section.room)
+  sections: Section[];
 
   @Column()
   name: string;

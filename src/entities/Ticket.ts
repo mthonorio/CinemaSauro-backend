@@ -14,7 +14,7 @@ import { Section } from './Section';
 @Entity('tickets')
 export class Ticket {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @OneToMany(() => PurchaseTicket, purchaseTicket => purchaseTicket.id)
   purchase_ticket: PurchaseTicket[];
@@ -24,19 +24,13 @@ export class Ticket {
   section: Section;
 
   @Column()
-  clientId: number;
+  seat: number;
+
+  @Column({ type: 'money' })
+  value: number;
 
   @Column()
-  buyId: number;
-
-  @Column()
-  movieId: number;
-
-  @Column()
-  sectionId: number;
-
-  @Column()
-  seatId: number;
+  date_section: Date;
 
   @CreateDateColumn()
   createdAt: Date;

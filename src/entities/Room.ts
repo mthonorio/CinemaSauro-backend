@@ -11,12 +11,12 @@ import { Section } from './Section';
 @Entity('rooms')
 export class Room {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @Column()
   number: number;
 
-  @Column('text')
+  @Column()
   capacity: number;
 
   @OneToMany(() => Section, section => section.room)

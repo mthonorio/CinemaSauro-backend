@@ -14,7 +14,7 @@ import { Section } from './Section';
 @Entity('purchase_ticket')
 export class PurchaseTicket {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   @ManyToOne(() => Ticket, ticket => ticket.id)
   @JoinColumn({ name: 'ticket_id' })

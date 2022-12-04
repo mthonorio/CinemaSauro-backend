@@ -2,21 +2,22 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Cast } from './Cast';
+import { Actor } from './Actor';
 import { Section } from './Section';
 
 @Entity('movies')
 export class Movie {
   @PrimaryGeneratedColumn('uuid')
-  id: number;
+  id: string;
 
   // Foreign Key
-  @OneToMany(() => Cast, cast => cast.movie)
-  cast: Cast[];
+  @ManyToMany(() => Actor, actor => actor.movies)
+  actors: Actor[];
 
   @OneToMany(() => Section, section => section.room)
   sections: Section[];
@@ -31,7 +32,7 @@ export class Movie {
   category: string;
 
   @Column()
-  duration: string;
+  duration: number;
 
   @Column()
   production_company: string;
