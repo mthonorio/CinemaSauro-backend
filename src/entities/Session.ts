@@ -11,10 +11,10 @@ import {
 import { Movie } from './Movie';
 import { Room } from './Room';
 import { Ticket } from './Ticket';
-import { TypeSection } from './TypeSection';
+import { TypeSession } from './TypeSession';
 
-@Entity('section')
-export class Section {
+@Entity('session')
+export class Session {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
@@ -22,9 +22,9 @@ export class Section {
   @JoinColumn({ name: 'movie_id' })
   movie: Movie;
 
-  @ManyToOne(() => TypeSection, type_section => type_section.id)
-  @JoinColumn({ name: 'type_section_id' })
-  type_section: TypeSection;
+  @ManyToOne(() => TypeSession, type_session => type_session.id)
+  @JoinColumn({ name: 'type_session_id' })
+  type_session: TypeSession;
 
   @ManyToOne(() => Room, room => room.id)
   @JoinColumn({ name: 'room_id' })

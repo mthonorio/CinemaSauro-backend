@@ -51,7 +51,10 @@ export class ClientController {
     return response.json(client);
   }
 
-  public async index(request: Request, response: Response): Promise<Response> {
+  public async showAll(
+    request: Request,
+    response: Response,
+  ): Promise<Response> {
     const clients = await clientRepository.find();
 
     return response.json(clients);

@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Section } from './Section';
+import { Session } from './Session';
 
 @Entity('rooms')
 export class Room {
@@ -19,8 +19,8 @@ export class Room {
   @Column()
   capacity: number;
 
-  @OneToMany(() => Section, section => section.room)
-  sections: Section[];
+  @OneToMany(() => Session, session => session.room)
+  sessions: Session[];
 
   @CreateDateColumn()
   createdAt: Date;

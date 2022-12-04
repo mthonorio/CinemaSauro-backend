@@ -1,5 +1,5 @@
 import { AppDataSource } from '../data-source';
 
-import { Section } from '../entities/Section';
+import { Session } from '../entities/Session';
 
-export const sectionRepository = AppDataSource.getRepository(Section);
+export const sessionRepository = AppDataSource.getRepository(Session);

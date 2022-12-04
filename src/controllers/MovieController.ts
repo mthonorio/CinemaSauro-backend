@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { movieRepository } from '../repositories/movieRepository';
+import { actorRepository } from '../repositories/actorRepository';
 
 export class MovieController {
   public async create(request: Request, response: Response): Promise<Response> {
@@ -35,6 +36,34 @@ export class MovieController {
       await movieRepository.save(movie);
 
       return response.status(201).json(movie);
+    } catch (err) {
+      console.log(err);
+      return response.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  public async createActor(
+    request: Request,
+    response: Response,
+  ): Promise<Response> {
+    const { name } = request.body;
+    const id = request.params;
+
+    try {
+      const movie = await movieRepository.findOneBy(id);
+
+      if (!movie) {
+        return response.status(404).json({ error: 'movie not found' });
+      }
+
+      const actor = actorRepository.create({
+        name,
+        movies: [movie],
+      });
+
+      await actorRepository.save(actor);
+
+      return response.status(201).json(actor);
     } catch (err) {
       console.log(err);
       return response.status(500).json({ message: 'Internal server error' });
@@ -80,7 +109,7 @@ export class MovieController {
       return response.status(400).json({ error: 'movie not found' });
     }
 
-    const movieAlreadyExists = await movieRepository.findOneBy(title);
+    const movieAlreadyExists = await movieRepository.findOneBy({ title });
 
     if (movieAlreadyExists && movieAlreadyExists.id !== movie.id) {
       return response

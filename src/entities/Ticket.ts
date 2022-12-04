@@ -9,7 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { PurchaseTicket } from './PurchaseTicket';
-import { Section } from './Section';
+import { Session } from './Session';
 
 @Entity('tickets')
 export class Ticket {
@@ -19,9 +19,9 @@ export class Ticket {
   @OneToMany(() => PurchaseTicket, purchaseTicket => purchaseTicket.id)
   purchase_ticket: PurchaseTicket[];
 
-  @OneToOne(() => Section, section => section.id)
-  @JoinColumn({ name: 'section_id' })
-  section: Section;
+  @OneToOne(() => Session, session => session.id)
+  @JoinColumn({ name: 'session_id' })
+  session: Session;
 
   @Column()
   seat: number;
@@ -30,7 +30,7 @@ export class Ticket {
   value: number;
 
   @Column()
-  date_section: Date;
+  date_session: Date;
 
   @CreateDateColumn()
   createdAt: Date;

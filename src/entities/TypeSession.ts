@@ -6,15 +6,15 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Section } from './Section';
+import { Session } from './Session';
 
-@Entity('type_section')
-export class TypeSection {
+@Entity('type_session')
+export class TypeSession {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToMany(() => Section, section => section.room)
-  sections: Section[];
+  @OneToMany(() => Session, session => session.room)
+  sessions: Session[];
 
   @Column()
   name: string;

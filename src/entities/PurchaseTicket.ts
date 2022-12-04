@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { Ticket } from './Ticket';
 import { Purchase } from './Purchase';
-import { Section } from './Section';
+import { Session } from './Session';
 
 @Entity('purchase_ticket')
 export class PurchaseTicket {
@@ -24,9 +24,9 @@ export class PurchaseTicket {
   @JoinColumn({ name: 'purchase_id' })
   purchase: Purchase;
 
-  @ManyToOne(() => Section, section => section.id)
-  @JoinColumn({ name: 'section_id' })
-  section: Section;
+  @ManyToOne(() => Session, session => session.id)
+  @JoinColumn({ name: 'session_id' })
+  session: Session;
 
   @CreateDateColumn()
   createdAt: Date;

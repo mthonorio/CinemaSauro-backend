@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Actor } from './Actor';
-import { Section } from './Section';
+import { Session } from './Session';
 
 @Entity('movies')
 export class Movie {
@@ -19,8 +19,8 @@ export class Movie {
   @ManyToMany(() => Actor, actor => actor.movies)
   actors: Actor[];
 
-  @OneToMany(() => Section, section => section.room)
-  sections: Section[];
+  @OneToMany(() => Session, session => session.room)
+  sessions: Session[];
 
   @Column()
   title: string;
