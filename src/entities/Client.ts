@@ -17,7 +17,13 @@ export class Client {
   name: string;
 
   @Column()
-  cpf: number;
+  cpf: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  password: string;
 
   @Column()
   category: string;

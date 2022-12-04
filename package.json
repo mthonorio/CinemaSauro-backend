@@ -6,10 +6,11 @@
   "scripts": {
     "build": "tsc",
     "dev:server": "ts-node-dev --transpile-only --ignore-watch node_modules src/server.ts",
-    "dev:index": "ts-node-dev --transpile-only --ignore-watch node_modules src/database/index.ts",
+    "dev:index": "ts-node-dev --transpile-only --ignore-watch node_modules src/index.ts",
     "typeorm": "ts-node-dev ./node_modules/typeorm/cli.js",
     "migration:generate": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:generate ./src/database/migrations/default",
-    "migration:run": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:run"
+    "migration:run": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:run",
+    "migration:revert": "typeorm-ts-node-commonjs -d ./src/data-source.ts migration:revert"
   },
   "author": "Matheus Honorio",
   "license": "ISC",
