@@ -2,14 +2,19 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Section } from './Section';
 
 @Entity('type_section')
 export class TypeSection {
   @PrimaryGeneratedColumn('uuid')
   id: number;
+
+  // @OneToMany(() => Section, section => section.room)
+  // sections: Section[];
 
   @Column()
   name: string;

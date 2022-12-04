@@ -7,24 +7,26 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Ticket } from './Ticket';
 import { Purchase } from './Purchase';
-import { Snack } from './Snack';
+import { Section } from './Section';
 
-@Entity('purchase_snack')
-export class PurchaseSnack {
+@Entity('purchase_ticket')
+export class PurchaseTicket {
   @PrimaryGeneratedColumn('uuid')
   id: number;
 
-  @ManyToOne(() => Snack, snack => snack.id)
-  @JoinColumn({ name: 'snack_id' })
-  snack: Snack;
+  @ManyToOne(() => Ticket, ticket => ticket.id)
+  @JoinColumn({ name: 'ticket_id' })
+  ticket: Ticket;
 
   @ManyToOne(() => Purchase, purchase => purchase.id)
   @JoinColumn({ name: 'purchase_id' })
   purchase: Purchase;
 
-  @Column()
-  quantity: number;
+  @ManyToOne(() => Section, section => section.id)
+  @JoinColumn({ name: 'section_id' })
+  section: Section;
 
   @CreateDateColumn()
   createdAt: Date;

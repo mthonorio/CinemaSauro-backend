@@ -2,14 +2,24 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Cast } from './Cast';
+import { Section } from './Section';
 
 @Entity('movies')
 export class Movie {
   @PrimaryGeneratedColumn('uuid')
   id: number;
+
+  // Foreign Key
+  @OneToMany(() => Cast, cast => cast.movie)
+  cast: Cast[];
+
+  @OneToMany(() => Section, section => section.room)
+  sections: Section[];
 
   @Column()
   title: string;
