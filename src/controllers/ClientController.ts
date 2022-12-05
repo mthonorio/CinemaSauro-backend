@@ -3,7 +3,7 @@ import { clientRepository } from '../repositories/clientRepository';
 
 export class ClientController {
   public async create(request: Request, response: Response): Promise<Response> {
-    const { name, cpf, email, password, category } = request.body;
+    const { name, cpf, email, password } = request.body;
 
     const clientAlreadyExists = await clientRepository.findByCPF(cpf);
 
@@ -19,7 +19,6 @@ export class ClientController {
         cpf,
         email,
         password,
-        category,
       });
 
       await clientRepository.save(client);
@@ -61,7 +60,7 @@ export class ClientController {
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
-    const { name, cpf, email, password, category } = request.body;
+    const { name, cpf, email, password } = request.body;
     const id = request.params;
 
     const client = await clientRepository.findOneBy(id);
@@ -82,7 +81,6 @@ export class ClientController {
     client.cpf = cpf;
     client.email = email;
     client.password = password;
-    client.category = category;
 
     await clientRepository.save(client);
 

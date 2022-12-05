@@ -70,6 +70,70 @@ export class MovieController {
     }
   }
 
+  public async addActorToMovie(request: Request, response: Response) {
+    const { actor_id } = request.body;
+    const id = request.params;
+
+    try {
+      const movie = await movieRepository.findOneBy(id);
+
+      if (!movie) {
+        return response.status(404).json({ error: 'movie not found' });
+      }
+
+      const actor = await actorRepository.findOneBy({ id: actor_id });
+
+      if (!actor) {
+        return response.status(404).json({ error: 'actor not found' });
+      }
+
+      const movieUpdated = {
+        ...movie,
+        actors: [actor],
+      };
+
+      await movieRepository.save(movieUpdated);
+
+      return response.status(204).send();
+    } catch (err) {
+      console.log(err);
+      return response.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  public async listAllCast(request: Request, response: Response) {
+    try {
+      const movies = await movieRepository.find({
+        relations: {
+          actors: true,
+        },
+      });
+
+      return response.json(movies);
+    } catch (err) {
+      console.log(err);
+      return response.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  public async showCast(
+    request: Request,
+    response: Response,
+  ): Promise<Response> {
+    const id = request.params;
+
+    const movie = await movieRepository.find({
+      where: id,
+      relations: ['actors'],
+    });
+
+    if (!movie) {
+      return response.status(400).json({ error: 'movie not found' });
+    }
+
+    return response.json(movie);
+  }
+
   public async show(request: Request, response: Response): Promise<Response> {
     const id = request.params;
 

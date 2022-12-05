@@ -32,6 +32,9 @@ export class Ticket {
   @Column()
   date_session: Date;
 
+  @Column()
+  category: string;
+
   @CreateDateColumn()
   createdAt: Date;
 

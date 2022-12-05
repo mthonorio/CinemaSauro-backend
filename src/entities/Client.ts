@@ -25,9 +25,6 @@ export class Client {
   @Column()
   password: string;
 
-  @Column()
-  category: string;
-
   @OneToMany(() => Purchase, purchase => purchase.client)
   purchase: Purchase[];
 
