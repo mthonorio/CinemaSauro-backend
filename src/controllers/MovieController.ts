@@ -10,6 +10,7 @@ export class MovieController {
       category,
       duration,
       production_company,
+      imageUrl,
       isPremiere,
       isNational,
     } = request.body;
@@ -29,6 +30,7 @@ export class MovieController {
         category,
         duration,
         production_company,
+        imageUrl,
         isPremiere,
         isNational,
       });
@@ -162,6 +164,7 @@ export class MovieController {
       category,
       duration,
       production_company,
+      imageUrl,
       isPremiere,
       isNational,
     } = request.body;
@@ -186,6 +189,7 @@ export class MovieController {
     movie.category = category;
     movie.duration = duration;
     movie.production_company = production_company;
+    movie.imageUrl = imageUrl;
     movie.isPremiere = isPremiere;
     movie.isNational = isNational;
 
