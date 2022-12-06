@@ -2,26 +2,40 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  ManyToOne,
-  OneToMany,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { PurchaseSnack } from './PurchaseSnack';
+import { Purchase } from './Purchase';
 
 @Entity('snacks')
 export class Snack {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => PurchaseSnack, purchaseSnack => purchaseSnack.id)
-  purchase_snack: PurchaseSnack;
+  @ManyToMany(() => Purchase, purchase => purchase.snacks)
+  @JoinTable({
+    name: 'purchase_snack',
+    joinColumn: {
+      name: 'purchase_id',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'snack_id',
+      referencedColumnName: 'id',
+    },
+  })
+  purchases: Purchase[];
 
   @Column()
   name: string;
 
   @Column({ type: 'money' })
   value: number;
+
+  @Column()
+  quantity: number;
 
   @CreateDateColumn()
   createdAt: Date;

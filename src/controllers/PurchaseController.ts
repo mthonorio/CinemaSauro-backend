@@ -3,23 +3,25 @@ import { purchaseRepository } from '../repositories/purchaseRepository';
 
 export class PurchaseController {
   public async create(request: Request, response: Response): Promise<Response> {
-    const { client_id } = request.body;
+    const { client_id, tickets, snacks, value_total } = request.body;
 
     try {
       const purchase = purchaseRepository.create({
-        id_client: 10000,
-        value_ticket: 0,
-        value_discount_ticket: 0,
-        value_total_ticket: 0,
-        value_snack: 0,
-        value_total_snack: 0,
-        value_total_purchase: 0,
-        client_id,
+        client_id: client_id,
+        tickets: JSON.stringify(tickets),
+        snacks: JSON.stringify(snacks),
+        value_total: value_total,
       } as any);
 
       await purchaseRepository.save(purchase);
 
-      return response.status(201).json(purchase);
+      const jsonPurchase = {
+        ...purchase,
+        tickets: tickets,
+        snacks: snacks,
+      };
+
+      return response.status(201).json(jsonPurchase);
     } catch (err) {
       console.log(err);
       return response.status(500).json({ message: 'Internal server error' });
@@ -31,7 +33,6 @@ export class PurchaseController {
 
     const purchase = await purchaseRepository.find({
       where: id,
-      relations: ['client', 'purchaseSnack', 'purchaseTicket'],
     });
 
     if (!purchase) {
@@ -45,9 +46,7 @@ export class PurchaseController {
     request: Request,
     response: Response,
   ): Promise<Response> {
-    const purchases = await purchaseRepository.find({
-      relations: ['client', 'purchaseSnack.snack', 'purchaseTicket.ticket'],
-    });
+    const purchases = await purchaseRepository.find();
 
     return response.json(purchases);
   }

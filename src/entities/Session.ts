@@ -26,11 +26,11 @@ export class Session {
   @JoinColumn({ name: 'type_session_id' })
   type_session: TypeSession;
 
-  @ManyToOne(() => Room, room => room.id)
+  @ManyToOne(() => Room, room => room.sessions)
   @JoinColumn({ name: 'room_id' })
   room: Room;
 
-  @OneToMany(() => Ticket, ticket => ticket.id)
+  @OneToMany(() => Ticket, ticket => ticket.session)
   @JoinColumn({ name: 'ticket_id' })
   ticket: Ticket[];
 
