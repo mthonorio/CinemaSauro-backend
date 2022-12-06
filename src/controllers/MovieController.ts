@@ -116,7 +116,7 @@ export class MovieController {
     }
   }
 
-  public async showCast(
+  public async listMovieCast(
     request: Request,
     response: Response,
   ): Promise<Response> {

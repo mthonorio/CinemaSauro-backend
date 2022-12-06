@@ -4,7 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  OneToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -30,8 +30,9 @@ export class Session {
   @JoinColumn({ name: 'room_id' })
   room: Room;
 
-  @OneToOne(() => Ticket, ticket => ticket.id)
-  ticket: Ticket;
+  @OneToMany(() => Ticket, ticket => ticket.id)
+  @JoinColumn({ name: 'ticket_id' })
+  ticket: Ticket[];
 
   @Column()
   timetable: string;

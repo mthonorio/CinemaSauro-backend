@@ -10,4 +10,12 @@ export const clientRepository = AppDataSource.getRepository(Client).extend({
 
     return findClient || null;
   },
+
+  async findByEmail(email: string): Promise<Client | null> {
+    const findClient = await this.findOne({
+      where: { email },
+    });
+
+    return findClient || null;
+  },
 });

@@ -3,8 +3,8 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
+  ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -19,7 +19,7 @@ export class Ticket {
   @OneToMany(() => PurchaseTicket, purchaseTicket => purchaseTicket.id)
   purchase_ticket: PurchaseTicket[];
 
-  @OneToOne(() => Session, session => session.id)
+  @ManyToOne(() => Session, session => session.id)
   @JoinColumn({ name: 'session_id' })
   session: Session;
 

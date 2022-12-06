@@ -38,6 +38,30 @@ export class ClientController {
     }
   }
 
+  public async login(request: Request, response: Response): Promise<Response> {
+    const { email, password } = request.body;
+
+    const client = await clientRepository.findByEmail(email);
+
+    if (!client) {
+      return response.status(400).json({ error: 'Client not found' });
+    }
+
+    if (client.password !== password) {
+      return response.status(400).json({ error: 'Incorrect password' });
+    }
+
+    const userWithoutPassword = {
+      id: client.id,
+      name: client.name,
+      email: client.email,
+      created_at: client.createdAt,
+      updated_at: client.updatedAt,
+    };
+
+    return response.json(userWithoutPassword);
+  }
+
   public async show(request: Request, response: Response): Promise<Response> {
     const id = request.params;
 

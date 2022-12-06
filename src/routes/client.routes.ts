@@ -5,6 +5,7 @@ import { ClientController } from '../controllers/ClientController';
 const clientsRouter = Router();
 
 clientsRouter.post('/', new ClientController().create);
+clientsRouter.post('/login', new ClientController().login);
 clientsRouter.get('/', new ClientController().showAll);
 clientsRouter.get('/:id', new ClientController().show);
 clientsRouter.put('/:id', new ClientController().update);
