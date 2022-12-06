@@ -22,13 +22,12 @@ export class Purchase {
   client: Client;
 
   @OneToMany(() => PurchaseSnack, purchaseSnack => purchaseSnack.id)
+  @JoinColumn({ name: 'purchase_snack_id' })
   purchase_snack: PurchaseSnack[];
 
   @OneToMany(() => PurchaseTicket, purchaseTicket => purchaseTicket.id)
+  @JoinColumn({ name: 'purchase_ticket_id' })
   purchase_ticket: PurchaseTicket[];
-
-  @Column()
-  id_client: number;
 
   @Column({ type: 'money' })
   value_ticket: number;
@@ -37,9 +36,9 @@ export class Purchase {
   @Column({ type: 'money' })
   value_total_ticket: number;
 
-  @Column({ type: 'money' })
+  @Column({ type: 'money', nullable: true })
   value_snack: number;
-  @Column({ type: 'money' })
+  @Column({ type: 'money', nullable: true })
   value_total_snack: number;
   @Column({ type: 'money' })
   value_total_purchase: number;

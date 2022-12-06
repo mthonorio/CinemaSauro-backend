@@ -6,6 +6,7 @@ export class MovieController {
   public async create(request: Request, response: Response): Promise<Response> {
     const {
       title,
+      description,
       censorship,
       category,
       duration,
@@ -26,6 +27,7 @@ export class MovieController {
     try {
       const movie = movieRepository.create({
         title,
+        description,
         censorship,
         category,
         duration,
@@ -38,6 +40,31 @@ export class MovieController {
       await movieRepository.save(movie);
 
       return response.status(201).json(movie);
+    } catch (err) {
+      console.log(err);
+      return response.status(500).json({ message: 'Internal server error' });
+    }
+  }
+
+  public async addMovieDescription(request: Request, response: Response) {
+    const { description } = request.body;
+    const id = request.params;
+
+    try {
+      const movie = await movieRepository.findOneBy(id);
+
+      if (!movie) {
+        return response.status(404).json({ error: 'movie not found' });
+      }
+
+      const movieUpdated = {
+        ...movie,
+        description,
+      };
+
+      await movieRepository.save(movieUpdated);
+
+      return response.status(204).send();
     } catch (err) {
       console.log(err);
       return response.status(500).json({ message: 'Internal server error' });

@@ -7,6 +7,10 @@ const moviesRouter = Router();
 moviesRouter.post('/', new MovieController().create);
 moviesRouter.post('/:id/create', new MovieController().createActor);
 moviesRouter.post('/:id/actor', new MovieController().addActorToMovie);
+moviesRouter.post(
+  '/:id/description',
+  new MovieController().addMovieDescription,
+);
 moviesRouter.get('/', new MovieController().showAll);
 moviesRouter.get('/lists', new MovieController().listAllCast);
 moviesRouter.get('/:id/cast', new MovieController().listMovieCast);

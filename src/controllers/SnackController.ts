@@ -3,7 +3,7 @@ import { snackRepository } from '../repositories/snackRepository';
 
 export class SnackController {
   public async create(request: Request, response: Response): Promise<Response> {
-    const { name, price } = request.body;
+    const { name, value } = request.body;
 
     const snackAlreadyExists = await snackRepository.findOneBy({
       name,
@@ -16,7 +16,7 @@ export class SnackController {
     try {
       const snack = snackRepository.create({
         name,
-        price,
+        value,
       });
 
       await snackRepository.save(snack);
@@ -29,7 +29,7 @@ export class SnackController {
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
-    const { name, price } = request.body;
+    const { name, value } = request.body;
     const id = request.params;
 
     const snack = await snackRepository.findOneBy(id);
@@ -47,7 +47,7 @@ export class SnackController {
     }
 
     snack.name = name;
-    snack.price = price;
+    snack.value = value;
 
     await snackRepository.save(snack);
 

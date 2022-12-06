@@ -25,6 +25,9 @@ export class Movie {
   @Column()
   title: string;
 
+  @Column({ type: 'text', nullable: true })
+  description: string;
+
   @Column()
   censorship: string;
 

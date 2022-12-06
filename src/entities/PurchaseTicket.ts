@@ -4,6 +4,7 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -16,17 +17,16 @@ export class PurchaseTicket {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => Ticket, ticket => ticket.id)
+  @OneToMany(() => Ticket, ticket => ticket.id)
   @JoinColumn({ name: 'ticket_id' })
-  ticket: Ticket;
+  ticket: Ticket[];
 
   @ManyToOne(() => Purchase, purchase => purchase.id)
-  @JoinColumn({ name: 'purchase_id' })
   purchase: Purchase;
 
-  @ManyToOne(() => Session, session => session.id)
+  @OneToMany(() => Session, session => session.id)
   @JoinColumn({ name: 'session_id' })
-  session: Session;
+  session: Session[];
 
   @CreateDateColumn()
   createdAt: Date;

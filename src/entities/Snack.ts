@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -13,14 +14,14 @@ export class Snack {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @OneToMany(() => PurchaseSnack, purchaseSnack => purchaseSnack.id)
-  purchase_snack: PurchaseSnack[];
+  @ManyToOne(() => PurchaseSnack, purchaseSnack => purchaseSnack.id)
+  purchase_snack: PurchaseSnack;
 
   @Column()
   name: string;
 
-  @Column()
-  price: number;
+  @Column({ type: 'money' })
+  value: number;
 
   @CreateDateColumn()
   createdAt: Date;
