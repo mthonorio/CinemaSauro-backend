@@ -37,6 +37,13 @@ export class Movie {
   @Column()
   production_company: string;
 
+  @Column({
+    nullable: false,
+    default:
+      'https://img.freepik.com/free-photo/gray-abstract-wireframe-technology-background_53876-101941.jpg?w=2000',
+  })
+  imageUrl: string;
+
   @Column()
   isPremiere: boolean;
 
