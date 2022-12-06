@@ -34,7 +34,7 @@ export class Snack {
   @Column({ type: 'money' })
   value: number;
 
-  @Column()
+  @Column({ default: 0 })
   quantity: number;
 
   @CreateDateColumn()

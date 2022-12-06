@@ -3,14 +3,11 @@ import {
   CreateDateColumn,
   Entity,
   JoinColumn,
-  ManyToMany,
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
 import { Client } from './Client';
-import { Ticket } from './Ticket';
-import { Snack } from './Snack';
 
 @Entity('purchase')
 export class Purchase {
