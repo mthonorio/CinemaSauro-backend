@@ -1,6 +1,10 @@
 # Backend do projeto de Banco de Dados
 
-## Rodando a docker image
+## Banco de dados
+
+Para criarmos a imagem postgresSQL, criamos um arquivo .yml de configuração com referência a uma Docker Image que cria e executa uma virtualização de uma máquina com o postgres instalado.
+
+### Rodando o container(docker image)
 
 Para subir a imagem é necessário ter o docker instalado.
 Na pasta docker do projeto, execute:
@@ -18,7 +22,7 @@ docker-compose down -v
 
 Isso irá apagar todos os containers que estiverem rodando atualmente na sua máquina e excluir os volumes.
 
-## Migrations
+### Migrations
 
 Para rodar todas as migrations em ordem crescente, basta rodar:
 
@@ -38,10 +42,24 @@ Quando for reverter uma alteração no banco, o typeorm ele fará o fluxo revers
 yarn migrations:revert
 ```
 
-## Rodando o server
+## Backend da aplicação
 
-Para rodar o backend na porta 3000
+### Executando o servidor
+
+Para subir o backend na porta 3000, basta executar no terminal:
 
 ```
 yarn dev:index
 ```
+
+## Populando o banco de dados
+
+Utilizamos Seeds que são objetos pré-definidos para criarmos automaticamente através de uma requisição na API. Dessa forma, executa as rotinas que definimos no controller passando os dados como parâmetros, como por exemplo: create(clients), create(sessions), create(movies).
+
+Para rodar todos os seeds, basta executar:
+
+```
+yarn seed
+```
+
+Caso a rotina já tenha sido executada e tentar executar novamente, o sistema retornará um "Done", porém não serão adicionados os objetos ao banco de dados para evitar redundância e que quebre em alguma rotina.

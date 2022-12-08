@@ -5,7 +5,7 @@ import { MovieController } from '../controllers/MovieController';
 const moviesRouter = Router();
 
 moviesRouter.post('/', new MovieController().create);
-moviesRouter.post('/:id/create', new MovieController().createActor);
+moviesRouter.post('/:id/create', new MovieController().createActorAndAddCast);
 moviesRouter.post('/:id/actor', new MovieController().addActorToMovie);
 moviesRouter.post(
   '/:id/description',

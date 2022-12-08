@@ -1,3 +1,4 @@
+import AppError from 'errors/AppError';
 import { Request, Response } from 'express';
 import { clientRepository } from '../repositories/clientRepository';
 
@@ -8,34 +9,27 @@ export class ClientController {
     const clientAlreadyExists = await clientRepository.findByCPF(cpf);
 
     if (clientAlreadyExists) {
-      return response
-        .status(400)
-        .json({ error: 'This CPF client is already registered' });
+      throw new AppError('This CPF client is already registered', 400);
     }
 
-    try {
-      const client = clientRepository.create({
-        name,
-        cpf,
-        email,
-        password,
-      });
+    const client = clientRepository.create({
+      name,
+      cpf,
+      email,
+      password,
+    });
 
-      await clientRepository.save(client);
+    await clientRepository.save(client);
 
-      const userWithoutPassword = {
-        id: client.id,
-        name: client.name,
-        email: client.email,
-        created_at: client.createdAt,
-        updated_at: client.updatedAt,
-      };
+    const userWithoutPassword = {
+      id: client.id,
+      name: client.name,
+      email: client.email,
+      created_at: client.createdAt,
+      updated_at: client.updatedAt,
+    };
 
-      return response.status(201).json(userWithoutPassword);
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({ message: 'Internal server error' });
-    }
+    return response.status(201).json(userWithoutPassword);
   }
 
   public async login(request: Request, response: Response): Promise<Response> {
@@ -44,11 +38,11 @@ export class ClientController {
     const client = await clientRepository.findByEmail(email);
 
     if (!client) {
-      return response.status(400).json({ error: 'Client not found' });
+      throw new AppError('Client not found', 404);
     }
 
     if (client.password !== password) {
-      return response.status(400).json({ error: 'Incorrect password' });
+      throw new AppError('Incorrect password', 400);
     }
 
     const userWithoutPassword = {
@@ -68,7 +62,7 @@ export class ClientController {
     const client = await clientRepository.findOneBy(id);
 
     if (!client) {
-      return response.status(400).json({ error: 'Client not found' });
+      throw new AppError('Client not found', 404);
     }
 
     return response.json(client);
@@ -90,15 +84,13 @@ export class ClientController {
     const client = await clientRepository.findOneBy(id);
 
     if (!client) {
-      return response.status(400).json({ error: 'Client not found' });
+      throw new AppError('Client not found', 404);
     }
 
     const clientAlreadyExists = await clientRepository.findByCPF(cpf);
 
     if (clientAlreadyExists && clientAlreadyExists.id !== client.id) {
-      return response
-        .status(400)
-        .json({ error: 'This CPF client is already registered' });
+      throw new AppError('This CPF client is already registered', 404);
     }
 
     client.name = name;
@@ -116,7 +108,7 @@ export class ClientController {
     const client = await clientRepository.findOneBy(id);
 
     if (!client) {
-      return response.status(400).json({ error: 'Client not found' });
+      throw new AppError('Client not found', 404);
     }
 
     await clientRepository.remove(client);

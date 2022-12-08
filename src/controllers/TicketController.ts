@@ -1,3 +1,4 @@
+import AppError from 'errors/AppError';
 import { Request, Response } from 'express';
 import { roomRepository } from '../repositories/roomRepository';
 import { sessionRepository } from '../repositories/sessionRepository';
@@ -14,36 +15,31 @@ export class TicketController {
     });
 
     if (!session) {
-      return response.status(404).json({ error: 'session not found' });
+      throw new AppError('session not found', 404);
     }
 
     if (session?.room?.capacity > allTickets.length) {
-      return response.status(400).json({ error: 'This room is full' });
+      throw new AppError('This room is full', 404);
     }
 
     //if there is a ticket already with this seat, then the seat is not available
     for (let i = 0; i < allTickets.length; i++) {
       if (allTickets[i].seat === seat) {
-        return response.status(400).json({ error: 'seat not available' });
+        throw new AppError('seat not available', 404);
       }
     }
 
-    try {
-      const ticket = ticketRepository.create({
-        seat,
-        value,
-        date_session,
-        category,
-        session,
-      });
+    const ticket = ticketRepository.create({
+      seat,
+      value,
+      date_session,
+      category,
+      session,
+    });
 
-      await ticketRepository.save(ticket);
+    await ticketRepository.save(ticket);
 
-      return response.status(201).json(ticket);
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({ message: 'Internal server error' });
-    }
+    return response.status(201).json(ticket);
   }
 
   public async allSeats(
@@ -64,7 +60,7 @@ export class TicketController {
     });
 
     if (!session) {
-      return response.status(404).json({ error: 'session not found' });
+      throw new AppError('session not found', 404);
     }
 
     const allSeats = [];
@@ -83,20 +79,7 @@ export class TicketController {
       allSeats.push({ seat, available });
     }
 
-    //if there is a ticket already with this seat, then variable the seat is not available
-    // for (let i = 0; i < allTickets.length; i++) {
-    //   allSeats.push({
-    //     seat: allTickets[i].seat,
-    //     available: false,
-    //   });
-    // }
-
-    try {
-      return response.status(201).send(allSeats);
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({ message: 'Internal server error' });
-    }
+    return response.status(201).send(allSeats);
   }
 
   public async show(request: Request, response: Response): Promise<Response> {
@@ -105,7 +88,7 @@ export class TicketController {
     const ticket = await ticketRepository.findOneBy(id);
 
     if (!ticket) {
-      return response.status(400).json({ error: 'ticket not found' });
+      throw new AppError('ticket not found', 404);
     }
 
     return response.json(ticket);
@@ -127,7 +110,7 @@ export class TicketController {
     const ticket = await ticketRepository.findOneBy(id);
 
     if (!ticket) {
-      return response.status(400).json({ error: 'ticket not found' });
+      throw new AppError('ticket not found', 404);
     }
 
     await ticketRepository.remove(ticket);

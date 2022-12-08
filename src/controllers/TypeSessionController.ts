@@ -1,3 +1,4 @@
+import AppError from 'errors/AppError';
 import { Request, Response } from 'express';
 import { typeSessionRepository } from '../repositories/typeSessionRepository';
 
@@ -10,24 +11,17 @@ export class TypeSessionController {
     });
 
     if (typeSessionAlreadyExists) {
-      return response
-        .status(400)
-        .json({ error: 'type session already exists' });
+      throw new AppError('type session already exists', 400);
     }
 
-    try {
-      const typeSession = typeSessionRepository.create({
-        name,
-        discount_percentage,
-      });
+    const typeSession = typeSessionRepository.create({
+      name,
+      discount_percentage,
+    });
 
-      await typeSessionRepository.save(typeSession);
+    await typeSessionRepository.save(typeSession);
 
-      return response.status(201).json(typeSession);
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({ message: 'Internal server error' });
-    }
+    return response.status(201).json(typeSession);
   }
 
   public async show(request: Request, response: Response): Promise<Response> {
@@ -36,7 +30,7 @@ export class TypeSessionController {
     const typeSession = await typeSessionRepository.findOneBy(id);
 
     if (!typeSession) {
-      return response.status(400).json({ error: 'typeSession not found' });
+      throw new AppError('Type session not found', 404);
     }
 
     return response.json(typeSession);
@@ -56,7 +50,7 @@ export class TypeSessionController {
     const typeSession = await typeSessionRepository.findOneBy(id);
 
     if (!typeSession) {
-      return response.status(400).json({ error: 'typeSession not found' });
+      throw new AppError('Type session not found', 404);
     }
 
     await typeSessionRepository.remove(typeSession);

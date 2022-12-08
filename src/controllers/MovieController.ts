@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { movieRepository } from '../repositories/movieRepository';
 import { actorRepository } from '../repositories/actorRepository';
+import AppError from 'errors/AppError';
 
 export class MovieController {
   public async create(request: Request, response: Response): Promise<Response> {
@@ -19,130 +20,100 @@ export class MovieController {
     const movieAlreadyExists = await movieRepository.findOneBy({ title });
 
     if (movieAlreadyExists) {
-      return response
-        .status(400)
-        .json({ error: 'This movie is already exist' });
+      throw new AppError('This movie is already exist', 404);
     }
+    const movie = movieRepository.create({
+      title,
+      description,
+      censorship,
+      category,
+      duration,
+      production_company,
+      imageUrl,
+      isPremiere,
+      isNational,
+    });
 
-    try {
-      const movie = movieRepository.create({
-        title,
-        description,
-        censorship,
-        category,
-        duration,
-        production_company,
-        imageUrl,
-        isPremiere,
-        isNational,
-      });
+    await movieRepository.save(movie);
 
-      await movieRepository.save(movie);
-
-      return response.status(201).json(movie);
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({ message: 'Internal server error' });
-    }
+    return response.status(201).json(movie);
   }
 
   public async addMovieDescription(request: Request, response: Response) {
     const { description } = request.body;
     const id = request.params;
+    const movie = await movieRepository.findOneBy(id);
 
-    try {
-      const movie = await movieRepository.findOneBy(id);
-
-      if (!movie) {
-        return response.status(404).json({ error: 'movie not found' });
-      }
-
-      const movieUpdated = {
-        ...movie,
-        description,
-      };
-
-      await movieRepository.save(movieUpdated);
-
-      return response.status(204).send();
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({ message: 'Internal server error' });
+    if (!movie) {
+      throw new AppError('movie not found', 404);
     }
+
+    const movieUpdated = {
+      ...movie,
+      description,
+    };
+
+    await movieRepository.save(movieUpdated);
+
+    return response.status(204).send();
   }
 
-  public async createActor(
+  public async createActorAndAddCast(
     request: Request,
     response: Response,
   ): Promise<Response> {
     const { name } = request.body;
     const id = request.params;
 
-    try {
-      const movie = await movieRepository.findOneBy(id);
+    const movie = await movieRepository.findOneBy(id);
 
-      if (!movie) {
-        return response.status(404).json({ error: 'movie not found' });
-      }
-
-      const actor = actorRepository.create({
-        name,
-        movies: [movie],
-      });
-
-      await actorRepository.save(actor);
-
-      return response.status(201).json(actor);
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({ message: 'Internal server error' });
+    if (!movie) {
+      throw new AppError('movie not found', 404);
     }
+
+    const actor = actorRepository.create({
+      name,
+      movies: [movie],
+    });
+
+    await actorRepository.save(actor);
+
+    return response.status(201).json(actor);
   }
 
   public async addActorToMovie(request: Request, response: Response) {
     const { actor_id } = request.body;
     const id = request.params;
+    const movie = await movieRepository.findOneBy(id);
 
-    try {
-      const movie = await movieRepository.findOneBy(id);
-
-      if (!movie) {
-        return response.status(404).json({ error: 'movie not found' });
-      }
-
-      const actor = await actorRepository.findOneBy({ id: actor_id });
-
-      if (!actor) {
-        return response.status(404).json({ error: 'actor not found' });
-      }
-
-      const movieUpdated = {
-        ...movie,
-        actors: [actor],
-      };
-
-      await movieRepository.save(movieUpdated);
-
-      return response.status(204).send();
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({ message: 'Internal server error' });
+    if (!movie) {
+      throw new AppError('movie not found', 404);
     }
+
+    const actor = await actorRepository.findOneBy({ id: actor_id });
+
+    if (!actor) {
+      throw new AppError('actor not found', 404);
+    }
+
+    const movieUpdated = {
+      ...movie,
+      actors: [actor],
+    };
+
+    await movieRepository.save(movieUpdated);
+
+    return response.status(204).send();
   }
 
   public async listAllCast(request: Request, response: Response) {
-    try {
-      const movies = await movieRepository.find({
-        relations: {
-          actors: true,
-        },
-      });
+    const movies = await movieRepository.find({
+      relations: {
+        actors: true,
+      },
+    });
 
-      return response.json(movies);
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({ message: 'Internal server error' });
-    }
+    return response.json(movies);
   }
 
   public async listMovieCast(
@@ -157,7 +128,7 @@ export class MovieController {
     });
 
     if (!movie) {
-      return response.status(400).json({ error: 'movie not found' });
+      throw new AppError('movie not found', 404);
     }
 
     return response.json(movie);
@@ -169,7 +140,7 @@ export class MovieController {
     const movie = await movieRepository.findOneBy(id);
 
     if (!movie) {
-      return response.status(400).json({ error: 'movie not found' });
+      throw new AppError('movie not found', 404);
     }
 
     return response.json(movie);
@@ -200,15 +171,13 @@ export class MovieController {
     const movie = await movieRepository.findOneBy(id);
 
     if (!movie) {
-      return response.status(400).json({ error: 'movie not found' });
+      throw new AppError('movie not found', 404);
     }
 
     const movieAlreadyExists = await movieRepository.findOneBy({ title });
 
     if (movieAlreadyExists && movieAlreadyExists.id !== movie.id) {
-      return response
-        .status(400)
-        .json({ error: 'This CPF movie is already registered' });
+      throw new AppError('This CPF movie is already registered', 404);
     }
 
     movie.title = title;
@@ -230,7 +199,7 @@ export class MovieController {
     const movie = await movieRepository.findOneBy(id);
 
     if (!movie) {
-      return response.status(400).json({ error: 'movie not found' });
+      throw new AppError('movie not found', 404);
     }
 
     await movieRepository.remove(movie);

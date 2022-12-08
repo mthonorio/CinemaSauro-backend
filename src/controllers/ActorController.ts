@@ -1,3 +1,4 @@
+import AppError from 'errors/AppError';
 import { Request, Response } from 'express';
 import { actorRepository } from '../repositories/actorRepository';
 
@@ -8,9 +9,7 @@ export class ActorController {
     const actorAlreadyExists = await actorRepository.findOneBy({ name });
 
     if (actorAlreadyExists) {
-      return response
-        .status(400)
-        .json({ error: 'This actor is already exist' });
+      throw new AppError('This actor is already exist', 404);
     }
 
     try {
@@ -33,7 +32,7 @@ export class ActorController {
     const actor = await actorRepository.findOneBy(id);
 
     if (!actor) {
-      return response.status(400).json({ error: 'actor not found' });
+      throw new AppError('actor not found', 404);
     }
 
     return response.json(actor);
@@ -55,7 +54,7 @@ export class ActorController {
     const actor = await actorRepository.findOneBy(id);
 
     if (!actor) {
-      return response.status(400).json({ error: 'actor not found' });
+      throw new AppError('actor not found', 404);
     }
 
     const actorAlreadyExists = await actorRepository.findOneBy({ name });
@@ -78,7 +77,7 @@ export class ActorController {
     const actor = await actorRepository.findOneBy(id);
 
     if (!actor) {
-      return response.status(400).json({ error: 'actor not found' });
+      throw new AppError('actor not found', 404);
     }
 
     await actorRepository.remove(actor);

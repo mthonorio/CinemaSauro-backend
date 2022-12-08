@@ -1,3 +1,4 @@
+import AppError from 'errors/AppError';
 import { Request, Response } from 'express';
 import { roomRepository } from '../repositories/roomRepository';
 
@@ -8,22 +9,17 @@ export class RoomController {
     const roomAlreadyExists = await roomRepository.findOneBy({ number });
 
     if (roomAlreadyExists) {
-      return response.status(400).json({ error: 'This room is already exist' });
+      throw new AppError('This room is already exist', 400);
     }
 
-    try {
-      const room = roomRepository.create({
-        number,
-        capacity,
-      });
+    const room = roomRepository.create({
+      number,
+      capacity,
+    });
 
-      await roomRepository.save(room);
+    await roomRepository.save(room);
 
-      return response.status(201).json(room);
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({ message: 'Internal server error' });
-    }
+    return response.status(201).json(room);
   }
 
   public async show(request: Request, response: Response): Promise<Response> {
@@ -32,7 +28,7 @@ export class RoomController {
     const room = await roomRepository.findOneBy(id);
 
     if (!room) {
-      return response.status(400).json({ error: 'room not found' });
+      throw new AppError('room not found', 404);
     }
 
     return response.json(room);
@@ -54,15 +50,13 @@ export class RoomController {
     const room = await roomRepository.findOneBy(id);
 
     if (!room) {
-      return response.status(400).json({ error: 'room not found' });
+      throw new AppError('room not found', 404);
     }
 
     const roomAlreadyExists = await roomRepository.findOneBy({ number });
 
     if (roomAlreadyExists && roomAlreadyExists.id !== room.id) {
-      return response
-        .status(400)
-        .json({ error: 'This room is already registered' });
+      throw new AppError('This room is already registered', 400);
     }
 
     room.number = number;
@@ -78,7 +72,7 @@ export class RoomController {
     const room = await roomRepository.findOneBy(id);
 
     if (!room) {
-      return response.status(400).json({ error: 'room not found' });
+      throw new AppError('room not found', 404);
     }
 
     await roomRepository.remove(room);

@@ -1,3 +1,4 @@
+import AppError from 'errors/AppError';
 import { Request, Response } from 'express';
 import { snackRepository } from '../repositories/snackRepository';
 
@@ -10,23 +11,18 @@ export class SnackController {
     });
 
     if (snackAlreadyExists) {
-      return response.status(400).json({ error: 'snack already exists' });
+      throw new AppError('snack already exists', 400);
     }
 
-    try {
-      const snack = snackRepository.create({
-        name,
-        value,
-        quantity,
-      });
+    const snack = snackRepository.create({
+      name,
+      value,
+      quantity,
+    });
 
-      await snackRepository.save(snack);
+    await snackRepository.save(snack);
 
-      return response.status(201).json(snack);
-    } catch (err) {
-      console.log(err);
-      return response.status(500).json({ message: 'Internal server error' });
-    }
+    return response.status(201).json(snack);
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
@@ -36,15 +32,13 @@ export class SnackController {
     const snack = await snackRepository.findOneBy(id);
 
     if (!snack) {
-      return response.status(400).json({ error: 'Snack not found' });
+      throw new AppError('Snack not found', 404);
     }
 
     const snackAlreadyExists = await snackRepository.findOneBy({ name });
 
     if (snackAlreadyExists && snackAlreadyExists.id !== snack.id) {
-      return response
-        .status(400)
-        .json({ error: 'This snack is already registered' });
+      throw new AppError('This snack is already registered', 400);
     }
 
     snack.name = name;
@@ -62,7 +56,7 @@ export class SnackController {
     const snack = await snackRepository.findOneBy(id);
 
     if (!snack) {
-      return response.status(400).json({ error: 'snack not found' });
+      throw new AppError('snack not found', 404);
     }
 
     return response.json(snack);
@@ -82,7 +76,7 @@ export class SnackController {
     const snack = await snackRepository.findOneBy(id);
 
     if (!snack) {
-      return response.status(400).json({ error: 'snack not found' });
+      throw new AppError('snack not found', 404);
     }
 
     await snackRepository.remove(snack);
