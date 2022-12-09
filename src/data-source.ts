@@ -1,6 +1,6 @@
 import 'dotenv/config';
 import 'reflect-metadata';
-import { MainSeeder } from 'seeds/MainSeeder';
+import { MainSeeder } from './seeds/MainSeeder';
 import { DataSource, DataSourceOptions } from 'typeorm';
 import { SeederOptions } from 'typeorm-extension';
 

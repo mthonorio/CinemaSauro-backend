@@ -1,4 +1,4 @@
-import AppError from 'errors/AppError';
+import AppError from '../errors/AppError';
 import { Request, Response } from 'express';
 import { movieRepository } from '../repositories/movieRepository';
 import { roomRepository } from '../repositories/roomRepository';

@@ -1,29 +1,60 @@
 import { Seeder, SeederFactoryManager } from 'typeorm-extension';
 import { DataSource } from 'typeorm';
-import { Client } from '../entities/Client';
-import bcrypt from 'bcrypt';
+import { TypeSession } from '../entities/TypeSession';
+import AppError from '../errors/AppError';
 
-export default class ClientSeeder implements Seeder {
+export default class TypeSessionSeeder implements Seeder {
   public async run(
     dataSource: DataSource,
     factoryManager: SeederFactoryManager,
   ): Promise<any> {
-    const clientRepository = dataSource.getRepository(Client);
+    const typeSessionRepository = dataSource.getRepository(TypeSession);
 
-    const clientData = {
-      name: 'Arthur Dionízio',
-      cpf: '12341233251',
-      email: 'dionizio@gmail.com',
-      password: '123456',
-    };
+    const typeSessionData = [
+      {
+        name: 'segunda-feira',
+        discount_percentage: 30,
+      },
+      {
+        name: 'terça-feira',
+        discount_percentage: 20,
+      },
+      {
+        name: 'quarta-feira',
+        discount_percentage: 30,
+      },
+      {
+        name: 'quinta-feira',
+        discount_percentage: 20,
+      },
+      {
+        name: 'sexta-feira',
+        discount_percentage: 10,
+      },
+      {
+        name: 'sábado',
+        discount_percentage: 0,
+      },
+      {
+        name: 'domingo',
+        discount_percentage: 0,
+      },
+    ];
 
-    const clientExists = await clientRepository.findOneBy({
-      email: clientData.email,
-    });
+    await Promise.all(
+      typeSessionData.map(async (type_session: any) => {
+        const { name, discount_percentage } = type_session;
 
-    if (!clientExists) {
-      const newClient = clientRepository.create(clientData);
-      await clientRepository.save(newClient);
-    }
+        if (!name) {
+          throw new AppError('This name is already exist', 400);
+        }
+
+        const newTypeSession = typeSessionRepository.create({
+          name,
+          discount_percentage,
+        });
+        await typeSessionRepository.save(newTypeSession);
+      }),
+    );
   }
 }

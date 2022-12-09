@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { movieRepository } from '../repositories/movieRepository';
 import { actorRepository } from '../repositories/actorRepository';
-import AppError from 'errors/AppError';
+import AppError from '../errors/AppError';
 
 export class MovieController {
   public async create(request: Request, response: Response): Promise<Response> {
