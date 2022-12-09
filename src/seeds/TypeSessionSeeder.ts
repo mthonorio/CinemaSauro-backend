@@ -45,15 +45,17 @@ export default class TypeSessionSeeder implements Seeder {
       typeSessionData.map(async (type_session: any) => {
         const { name, discount_percentage } = type_session;
 
-        if (!name) {
-          throw new AppError('This name is already exist', 400);
-        }
-
-        const newTypeSession = typeSessionRepository.create({
-          name,
-          discount_percentage,
+        const typeSessionExists = await typeSessionRepository.findOneBy({
+          name: name,
         });
-        await typeSessionRepository.save(newTypeSession);
+
+        if (!typeSessionExists) {
+          const newTypeSession = typeSessionRepository.create({
+            name,
+            discount_percentage,
+          });
+          await typeSessionRepository.save(newTypeSession);
+        }
       }),
     );
   }
