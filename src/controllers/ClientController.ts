@@ -73,7 +73,9 @@ export class ClientController {
       throw new AppError('Client not found', 404);
     }
 
-    return response.json(client);
+    const { password: _, ...clientWithoutPassword } = client;
+
+    return response.json(clientWithoutPassword);
   }
 
   public async showAll(
@@ -82,11 +84,16 @@ export class ClientController {
   ): Promise<Response> {
     const clients = await clientRepository.find();
 
-    return response.json(clients);
+    const clientsWithoutPassword = clients.map(client => {
+      const { password: _, ...clientWithoutPassword } = client;
+      return clientWithoutPassword;
+    });
+
+    return response.json(clientsWithoutPassword);
   }
 
   public async update(request: Request, response: Response): Promise<Response> {
-    const { name, cpf, email, password } = request.body;
+    const { name, cpf, email } = request.body;
     const id = request.params;
 
     const client = await clientRepository.findOneBy(id);
@@ -104,11 +111,42 @@ export class ClientController {
     client.name = name;
     client.cpf = cpf;
     client.email = email;
-    client.password = password;
 
     await clientRepository.save(client);
 
-    return response.json(client);
+    const { password: _, ...clientWithoutPassword } = client;
+
+    return response.json(clientWithoutPassword);
+  }
+
+  public async changePassword(
+    request: Request,
+    response: Response,
+  ): Promise<Response> {
+    const { oldPassword, newPassword } = request.body;
+    const id = request.params;
+
+    const client = await clientRepository.findOneBy(id);
+
+    if (!client) {
+      throw new AppError('Client not found', 404);
+    }
+
+    const verifyPass = await bcrypt.compare(oldPassword, client.password);
+
+    if (!verifyPass) {
+      throw new AppError('Incorrect old password', 400);
+    }
+
+    const hashPassword = await bcrypt.hash(newPassword, 10);
+
+    client.password = hashPassword;
+
+    await clientRepository.save(client);
+
+    const { password: _, ...clientWithoutPassword } = client;
+
+    return response.json(clientWithoutPassword);
   }
 
   public async delete(request: Request, response: Response): Promise<Response> {
