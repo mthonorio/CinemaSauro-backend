@@ -13,6 +13,7 @@ clientsRouter.get('/:id', new ClientController().show);
 clientsRouter.use(ensureAuthenticated);
 
 clientsRouter.put('/:id', new ClientController().update);
+clientsRouter.patch('/password/:id', new ClientController().changePassword);
 clientsRouter.delete('/:id', new ClientController().delete);
 
 export default clientsRouter;
