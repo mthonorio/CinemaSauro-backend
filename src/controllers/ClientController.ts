@@ -1,32 +1,37 @@
 import AppError from '../errors/AppError';
 import { Request, Response } from 'express';
 import { clientRepository } from '../repositories/clientRepository';
+import authConfig from '../config/auth';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 export class ClientController {
   public async create(request: Request, response: Response): Promise<Response> {
     const { name, cpf, email, password } = request.body;
 
-    const clientAlreadyExists = await clientRepository.findByCPF(cpf);
+    const clientAlreadyExists = await clientRepository.findByEmail(email);
 
     if (clientAlreadyExists) {
-      throw new AppError('This CPF client is already registered', 400);
+      throw new AppError('This email is already registered', 400);
     }
 
-    const client = clientRepository.create({
+    const hashPassword = await bcrypt.hash(password, 10);
+
+    const newClient = clientRepository.create({
       name,
       cpf,
       email,
-      password,
+      password: hashPassword,
     });
 
-    await clientRepository.save(client);
+    await clientRepository.save(newClient);
 
     const userWithoutPassword = {
-      id: client.id,
-      name: client.name,
-      email: client.email,
-      created_at: client.createdAt,
-      updated_at: client.updatedAt,
+      id: newClient.id,
+      name: newClient.name,
+      email: newClient.email,
+      created_at: newClient.createdAt,
+      updated_at: newClient.updatedAt,
     };
 
     return response.status(201).json(userWithoutPassword);
@@ -38,22 +43,25 @@ export class ClientController {
     const client = await clientRepository.findByEmail(email);
 
     if (!client) {
-      throw new AppError('Client not found', 404);
+      throw new AppError('Incorrect email/password combination.', 404);
     }
 
-    if (client.password !== password) {
-      throw new AppError('Incorrect password', 400);
+    const verifyPass = await bcrypt.compare(password, client.password);
+
+    if (!verifyPass) {
+      throw new AppError('Incorrect email/password combination.', 400);
     }
 
-    const userWithoutPassword = {
-      id: client.id,
-      name: client.name,
-      email: client.email,
-      created_at: client.createdAt,
-      updated_at: client.updatedAt,
-    };
+    const { secret, expiresIn } = authConfig.jwt;
 
-    return response.json(userWithoutPassword);
+    const token = jwt.sign({ id: client.id }, secret, {
+      subject: client.id,
+      expiresIn,
+    });
+
+    const { password: _, ...clientLogin } = client;
+
+    return response.json({ client: clientLogin, token });
   }
 
   public async show(request: Request, response: Response): Promise<Response> {

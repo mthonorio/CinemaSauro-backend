@@ -1,9 +1,11 @@
 import { Router } from 'express';
-
-import { PurchaseController } from '../controllers/PurchaseController';
+import ensureAuthenticated from '../middlewares/ensureAuthenticated';
 import validateAndCreateTickets from '../middlewares/validateAndCreateTickets';
+import { PurchaseController } from '../controllers/PurchaseController';
 
 const purchasesRouter = Router();
+
+purchasesRouter.use(ensureAuthenticated);
 
 purchasesRouter.post(
   '/',
