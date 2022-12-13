@@ -1,4 +1,8 @@
-# Backend do projeto de Banco de Dados
+# Cinema Sauro Backend
+
+## [![Run in Insomnia}](https://insomnia.rest/images/run.svg)](https://insomnia.rest/run/?label=BD%20Project&uri=https%3A%2F%2Fraw.githubusercontent.com%2Fmthonorio%2FCinemaSauro-backend%2Fmain%2FInsomnia_API.json)
+
+Backend do projeto final da disciplina de Banco de Dados da UFPB do semestre 2022.1.
 
 ## Banco de dados
 
