@@ -47,6 +47,28 @@ export class SessionController {
     return response.json(sessions);
   }
 
+  public async update(request: Request, response: Response): Promise<Response> {
+    const { timetable, date_start, date_end } = request.body;
+    const id = request.params;
+
+    const session = await sessionRepository.findOneBy(id);
+
+    if (!session) {
+      throw new AppError('session not found', 404);
+    }
+
+    const sessionUpdated = {
+      ...session,
+      timetable,
+      date_start,
+      date_end,
+    };
+
+    await sessionRepository.save(sessionUpdated);
+
+    return response.status(204).send();
+  }
+
   public async updateSessionRoom(
     request: Request,
     response: Response,
