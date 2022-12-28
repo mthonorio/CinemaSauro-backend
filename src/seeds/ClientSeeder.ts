@@ -14,7 +14,7 @@ export default class ClientSeeder implements Seeder {
       name: 'Arthur Dionízio',
       cpf: '12341233251',
       email: 'dionizio@gmail.com',
-      password: '123456',
+      password: bcrypt.hashSync('123456', 10),
     };
 
     const clientExists = await clientRepository.findOneBy({
