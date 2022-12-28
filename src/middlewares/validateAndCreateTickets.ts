@@ -18,7 +18,8 @@ export default async function validateAndCreateTickets(
 
   const ticketsArray = await Promise.all(
     tickets.map(async (ticket: any) => {
-      const { session_id, seat, value, date_session, category } = ticket;
+      const { session_id, session_hour, seat, value, date_session, category } =
+        ticket;
 
       if (!session_id) {
         throw new AppError('session_id not found', 404);
@@ -32,20 +33,30 @@ export default async function validateAndCreateTickets(
         throw new AppError('session not found', 404);
       }
 
+      const hours = session.timetable
+        .split(',')
+        .map((time: string) => time.trim());
+
+      if (!hours.includes(session_hour)) {
+        throw new AppError('session hour incorrect', 404);
+      }
+
       const allTickets = await ticketRepository.findBy({
         session_id: session_id,
       });
 
       //if there is a ticket already with this seat, then the seat is not available
       for (let i = 0; i < allTickets.length; i++) {
+        if (allTickets[i].session_hour !== session_hour) continue;
         if (allTickets[i].seat === seat) {
-          throw new AppError(`seat ${seat} not available`, 404);
+          throw new AppError(`seat ${seat} not available`, 400);
         }
       }
 
       try {
         const newTicket = ticketRepository.create({
           seat,
+          session_hour,
           value,
           date_session,
           category,

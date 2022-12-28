@@ -6,7 +6,7 @@ import { ticketRepository } from '../repositories/ticketRepository';
 
 export class TicketController {
   public async create(request: Request, response: Response): Promise<Response> {
-    const { seat, value, date_session, category } = request.body;
+    const { seat, session_hour, value, date_session, category } = request.body;
     const session_id = request.params;
 
     const session = await sessionRepository.findOneBy(session_id);
@@ -18,19 +18,36 @@ export class TicketController {
       throw new AppError('session not found', 404);
     }
 
-    if (session?.room?.capacity > allTickets.length) {
+    const hours = session.timetable
+      .split(',')
+      .map((time: string) => time.trim());
+
+    if (!hours.includes(session_hour)) {
+      throw new AppError('session hour incorrect', 404);
+    }
+    let lengthTicketsSessionForHour = 0;
+
+    await allTickets.forEach(ticket => {
+      if (ticket.session_hour === session_hour) {
+        lengthTicketsSessionForHour++;
+      }
+    });
+
+    if (session?.room?.capacity > lengthTicketsSessionForHour) {
       throw new AppError('This room is full', 404);
     }
 
     //if there is a ticket already with this seat, then the seat is not available
     for (let i = 0; i < allTickets.length; i++) {
+      if (allTickets[i].session_hour !== session_hour) continue;
       if (allTickets[i].seat === seat) {
-        throw new AppError('seat not available', 404);
+        throw new AppError('seat not available', 400);
       }
     }
 
     const ticket = ticketRepository.create({
       seat,
+      session_hour,
       value,
       date_session,
       category,
@@ -48,6 +65,7 @@ export class TicketController {
   ): Promise<Response> {
     //return an array of objects with the seat and a boolean if the seat is available or not
     const session_id = request.params;
+    const { session_hour } = request.body;
 
     const session = await sessionRepository.findOneBy(session_id);
     const room = await roomRepository.findOne({
@@ -63,6 +81,14 @@ export class TicketController {
       throw new AppError('session not found', 404);
     }
 
+    const hours = session.timetable
+      .split(',')
+      .map((time: string) => time.trim());
+
+    if (!hours.includes(session_hour)) {
+      throw new AppError('session hour incorrect', 404);
+    }
+
     const allSeats = [];
 
     //loop through all seats in the room and return an array of objects with the seat and a boolean if the seat is available or not
@@ -71,8 +97,10 @@ export class TicketController {
       let available = true;
 
       for (let j = 0; j < allTickets.length; j++) {
-        if (allTickets[j].seat === seat) {
-          available = false;
+        if (allTickets[j].session_hour === session_hour) {
+          if (allTickets[j].seat === seat) {
+            available = false;
+          }
         }
       }
 

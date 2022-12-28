@@ -40,6 +40,9 @@ export class Ticket {
   session_id: string;
 
   @Column()
+  session_hour: string;
+
+  @Column()
   seat: number;
 
   @Column({ type: 'money' })
